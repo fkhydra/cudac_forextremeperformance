@@ -145,8 +145,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 		(WS_OVERLAPPED | WS_SYSMENU | WS_THICKFRAME | WS_MAXIMIZEBOX | WS_MINIMIZEBOX),
 		50,
 		50,
-		1900,
-		1000,
+		SCREEN_WIDTH,
+		SCREEN_HEIGHT,
 		NULL,
 		NULL,
 		hInstance,
@@ -188,7 +188,7 @@ LRESULT CALLBACK WndProc0(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		pD2DFactory->CreateHwndRenderTarget(
 			D2D1::RenderTargetProperties(),
 			D2D1::HwndRenderTargetProperties(
-				hwnd, D2D1::SizeU(800, 600)),
+				hwnd, D2D1::SizeU(SCREEN_WIDTH, SCREEN_HEIGHT)),
 			&pRT);
 		create_main_buffer();
 		cudaMalloc((void**)&dev_raw_verticesX, MAX_OBJ_NUM * sizeof(float));
@@ -850,8 +850,9 @@ __global__ void CUDA_rotation(int maxitemcount, float *rawarrayX, float *rawarra
 		rotarrayZ[i] = -rawarrayX[i] * degree_siny + rotarrayZ[i] * degree_cosy;// +
 
 		t0 = rotarrayX[i];
-		rotarrayX[i] = t0 * degree_cosz - rotarrayY[i] * degree_sinz;
-		rotarrayY[i] = t0 * degree_sinz + rotarrayY[i] * degree_cosz;
+		//some tweaking for OBJ models: "+ (SCREEN_WIDTH / 4)" and "+ (SCREEN_HEIGHT / 4)"
+		rotarrayX[i] = t0 * degree_cosz - rotarrayY[i] * degree_sinz  + (SCREEN_WIDTH / 4);
+		rotarrayY[i] = t0 * degree_sinz + rotarrayY[i] * degree_cosz  + (SCREEN_HEIGHT / 4);
 	}
 
 	//perspective projection

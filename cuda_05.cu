@@ -75,8 +75,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 		(WS_OVERLAPPED | WS_SYSMENU | WS_THICKFRAME | WS_MAXIMIZEBOX | WS_MINIMIZEBOX),
 		50,
 		50,
-		400,
-		300,
+		SCREEN_WIDTH,
+		SCREEN_HEIGHT,
 		NULL,
 		NULL,
 		hInstance,
@@ -118,7 +118,7 @@ LRESULT CALLBACK WndProc0(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		pD2DFactory->CreateHwndRenderTarget(
 			D2D1::RenderTargetProperties(),
 			D2D1::HwndRenderTargetProperties(
-				hwnd, D2D1::SizeU(800, 600)),
+				hwnd, D2D1::SizeU(SCREEN_WIDTH, SCREEN_HEIGHT)),
 			&pRT);
 		create_main_buffer();
 		return 0;

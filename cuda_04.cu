@@ -102,7 +102,7 @@ LRESULT CALLBACK WndProc0(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		pD2DFactory->CreateHwndRenderTarget(
 			D2D1::RenderTargetProperties(),
 			D2D1::HwndRenderTargetProperties(
-				hwnd, D2D1::SizeU(800, 600)),
+				hwnd, D2D1::SizeU(400, 300)),
 			&pRT);
 		return 0;
 	//*********************************
