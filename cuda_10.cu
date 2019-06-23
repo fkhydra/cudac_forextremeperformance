@@ -14,7 +14,7 @@
 #define SCREEN_HEIGHT 1000
 
 D2D1_RECT_U display_area;
-ID2D1Bitmap *memkeptarolo = NULL;
+ID2D1Bitmap *image_container = NULL;
 unsigned int *dev_image_data, image_data[SCREEN_WIDTH * SCREEN_HEIGHT];
 float *dev_zbuffer;//ez int is volt/lehet
 typedef struct Vec3f {
@@ -310,7 +310,7 @@ void create_main_buffer(void)
 {
 	pRT->CreateBitmap(D2D1::SizeU(SCREEN_WIDTH, SCREEN_HEIGHT),
 		D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM,
-			D2D1_ALPHA_MODE_IGNORE)), &memkeptarolo);
+			D2D1_ALPHA_MODE_IGNORE)), &image_container);
 }
 
 void CUDA_cleanup_main_buffer(void)
@@ -336,9 +336,9 @@ void swap_main_buffer(void)
 	display_area.top = 0;
 	display_area.right = SCREEN_WIDTH;
 	display_area.bottom = SCREEN_HEIGHT;
-	memkeptarolo->CopyFromMemory(&display_area, image_data, SCREEN_WIDTH * sizeof(unsigned int));
+	image_container->CopyFromMemory(&display_area, image_data, SCREEN_WIDTH * sizeof(unsigned int));
 	pRT->BeginDraw();
-	pRT->DrawBitmap(memkeptarolo, D2D1::RectF(0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT), 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, NULL);
+	pRT->DrawBitmap(image_container, D2D1::RectF(0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT), 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, NULL);
 	pRT->EndDraw();
 }
 
