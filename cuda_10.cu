@@ -24,10 +24,8 @@ typedef struct Vec3f {
 
 //**************PEGAZUS 3D************
 #define MAX_OBJ_NUM 20000000
-float zoo_value = 1.0;
 int drawing_in_progress = 0;
 int viewpoint = -500;
-float persp_degree, current_zoom;
 float rot_degree_x;
 float rot_degree_y;
 float rot_degree_z;
@@ -36,7 +34,6 @@ float rot_degree_y2 = 90.0f;
 float rot_degree_z2 = 0;
 float Math_PI = 3.14159265358979323846;
 float raw_verticesX[MAX_OBJ_NUM], raw_verticesY[MAX_OBJ_NUM], raw_verticesZ[MAX_OBJ_NUM];
-int raw_vertex_counter;
 int raw_vertices_length;
 struct VEKTOR {
 	float x;
@@ -50,7 +47,6 @@ float *dev_rotated_verticesX, *dev_rotated_verticesY, *dev_rotated_verticesZ;
 //************************
 void init_3D(void);
 void data_transfer_to_GPU(void);
-void cleanup_matrices(void);
 void D2D_drawing(void);
 __global__ void CUDA_rotation(int maxitemcount, float *rawarrayX, float *rawarrayY, float *rawarrayZ, float *rotarrayX, float *rotarrayY, float *rotarrayZ, float degree_cosx, float degree_sinx, float degree_cosy, float degree_siny, float degree_cosz, float degree_sinz);
 void drawing(void);
@@ -180,9 +176,9 @@ LRESULT CALLBACK WndProc0(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	switch (message)
 	{
-	//*********************************
-	//When creating the window
-	//*********************************
+		//*********************************
+		//When creating the window
+		//*********************************
 	case WM_CREATE:
 		D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &pD2DFactory);
 		pD2DFactory->CreateHwndRenderTarget(
@@ -204,9 +200,9 @@ LRESULT CALLBACK WndProc0(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		data_transfer_to_GPU();
 		if ((joyGetNumDevs()) > 0) joySetCapture(hwnd, JOYSTICKID1, NULL, FALSE);
 		return 0;
-	//*********************************
-	//to eliminate color flickering
-	//*********************************
+		//*********************************
+		//to eliminate color flickering
+		//*********************************
 	case WM_ERASEBKGND:
 		return (LRESULT)1;
 	case MM_JOY1MOVE:
@@ -254,7 +250,6 @@ LRESULT CALLBACK WndProc0(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			int blockSize = 384;
 			int numBlocks = (raw_vertices_length + blockSize - 1) / blockSize;
-			zoo_value *= 1.02;
 			zoom_in << <numBlocks, blockSize >> > (raw_vertices_length, dev_raw_verticesX, dev_raw_verticesY, dev_raw_verticesZ);
 			cudaDeviceSynchronize();
 			D2D_drawing();
@@ -263,23 +258,22 @@ LRESULT CALLBACK WndProc0(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			int blockSize = 384;
 			int numBlocks = (raw_vertices_length + blockSize - 1) / blockSize;
-			zoo_value /= 1.02;
 			zoom_out << <numBlocks, blockSize >> > (raw_vertices_length, dev_raw_verticesX, dev_raw_verticesY, dev_raw_verticesZ);
 			cudaDeviceSynchronize();
 			D2D_drawing();
 		}
 		break;
-	//*********************************
-	//Repainting the client area of the window
-	//*********************************
+		//*********************************
+		//Repainting the client area of the window
+		//*********************************
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
 		EndPaint(hwnd, &ps);
 		D2D_drawing();
 		return 0;
-	//*********************************
-	//Closing the window, freeing resources
-	//*********************************
+		//*********************************
+		//Closing the window, freeing resources
+		//*********************************
 	case WM_CLOSE:
 		pRT->Release();
 		pD2DFactory->Release();
@@ -641,16 +635,9 @@ __device__ void CUDA_FillTriangle_Zbuffer(int x1, int y1, int z1, int x2, int y2
 
 void init_3D(void)
 {
-	persp_degree = Math_PI / 180;
 	rot_degree_x = 0 * Math_PI / 180; rot_degree_x2 = 0;
 	rot_degree_y = 0 * Math_PI / 180; rot_degree_y2 = 0;
 	rot_degree_z = 0 * Math_PI / 180; rot_degree_z2 = 0;
-	cleanup_matrices();
-}
-
-void cleanup_matrices(void)
-{
-	raw_vertex_counter = 0;
 	raw_vertices_length = 0;
 }
 
@@ -708,7 +695,7 @@ void obj_loader(void)
 	int data_count, max_row_length = 250;
 	char tempstr[200];
 
-	objfile = fopen("ship.obj", "rt");
+	objfile = fopen("model.obj", "rt");
 	if (objfile == NULL) return;
 
 	vertex_counter = poly_counter = 0;
@@ -851,8 +838,8 @@ __global__ void CUDA_rotation(int maxitemcount, float *rawarrayX, float *rawarra
 
 		t0 = rotarrayX[i];
 		//some tweaking for OBJ models: "+ (SCREEN_WIDTH / 4)" and "+ (SCREEN_HEIGHT / 4)"
-		rotarrayX[i] = t0 * degree_cosz - rotarrayY[i] * degree_sinz  + (SCREEN_WIDTH / 4);
-		rotarrayY[i] = t0 * degree_sinz + rotarrayY[i] * degree_cosz  + (SCREEN_HEIGHT / 4);
+		rotarrayX[i] = t0 * degree_cosz - rotarrayY[i] * degree_sinz + (SCREEN_WIDTH / 4);
+		rotarrayY[i] = t0 * degree_sinz + rotarrayY[i] * degree_cosz + (SCREEN_HEIGHT / 4);
 	}
 
 	//perspective projection
