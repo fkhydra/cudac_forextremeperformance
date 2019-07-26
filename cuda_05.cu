@@ -24,7 +24,7 @@ char szClassName[] = "WindowsApp";
 HWND Form1; //Windows handle
 
 LRESULT CALLBACK WndProc0(HWND, UINT, WPARAM, LPARAM);
-void D2D_rajzolas(ID2D1HwndRenderTarget* pRT);
+void D2D_drawing(ID2D1HwndRenderTarget* pRT);
 
 //*****double buffering*****
 void create_main_buffer(void);
@@ -133,7 +133,7 @@ LRESULT CALLBACK WndProc0(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
 		EndPaint(hwnd, &ps);
-		D2D_rajzolas(pRT);
+		D2D_drawing(pRT);
 		return 0;
 		//*********************************
 		//Closing the window, freeing resources
@@ -153,7 +153,7 @@ LRESULT CALLBACK WndProc0(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hwnd, message, wParam, lParam);
 }
 
-void D2D_rajzolas(ID2D1HwndRenderTarget* pRT)
+void D2D_drawing(ID2D1HwndRenderTarget* pRT)
 {
 	cleanup_main_buffer();
 	//drawing functions etc.

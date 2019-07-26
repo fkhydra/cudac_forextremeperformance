@@ -4,7 +4,7 @@
 
 __global__ void GPU_kernel()
 {
-	printf("blokk: %i, szal:%i\n", blockIdx.x, threadIdx.x);
+	printf("block: %i, thread:%i\n", blockIdx.x, threadIdx.x);
 }
 
 int main(void)
