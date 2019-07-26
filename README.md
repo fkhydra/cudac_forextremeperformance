@@ -10,3 +10,5 @@ Latest updates:
 23.06.2019: fixed size parameters used in CreateWindow and D2D1CreateFactory in cuda_04 - cuda_10.cu
 
 30.06.2019: removed unused variables/functions in cuda_10.cu
+
+26.07.2019: some minor changes in variable names
